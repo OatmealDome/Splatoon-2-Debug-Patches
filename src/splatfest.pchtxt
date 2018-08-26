@@ -1,0 +1,239 @@
+@little-endian
+@nsobid-68202F1AE35348E476523EA2F6E36AA4
+#01003870040FA000 Splatoon 2: Splatfest World Premiere (US)
+#01003870040FA000 Splatoon 2 Splatfest World Premiere (EU)
+#0100D070040F8000 スプラトゥーン2 前夜祭 (Splatoon 2 Eve, JP)
+
+@flag offset_shift 0x100
+
+// ********************************************************************
+//
+// (c) 2018 OatmealDome
+// Licensed under GPLv3, see the included LICENSE.txt or visit
+// https://www.gnu.org/licenses/gpl-3.0.en.html for more information.
+//
+// This patch file was written on 08/23/2018.
+//
+// Dedicated to my boyfriend, Simonx22
+// Shoutouts to MasterF0x, Wii Sports, Khangaroo, and Dualie (3096)
+//
+// ********************************************************************
+
+// Addresses in the comments are for Splatoon 2 version 3.0, the Testfire,
+// or Splatfest World Premiere. Which ones are which? Your guess is as good
+// as mine - I forgot to note that information down.
+
+// .text:0000000000098FCC _ZN3Cmn3Def12isDevelopSeqEv
+// .text:0000000000098FCC ; __unwind {
+// .text:0000000000098FCC                 MOV             W0, #1  ; Keypatch modified this from:
+// .text:0000000000098FCC                                         ;   MOV W0, WZR
+// .text:0000000000098FD0                 RET
+// .text:0000000000098FD0 ; } // starts at 98FCC
+//
+// Cmn::Def::isDevelopSeq() was dummied out. It seems that it would have
+// called Game::Utl::Limit::isDevelopSeq(), which checks GameConfigSetting
+// for "CorrectSeq" being set to 2. This option would put the game into
+// "development mode", launching DbgSetting on boot.
+// 
+// Cmn::Def::isDevelopSeq() always returns true
+@enabled
+000807d8 20008052
+
+// .text:00000000001A4384 _ZN4Cstm8newSceneIN12TitleForShow5SceneEEEPN2Lp3Sys5SceneEiPN4sead4HeapE
+// .text:00000000001A4384 ; __unwind {
+// .text:00000000001A43B4                 MOV             W0, #0x1000 ; unsigned __int64
+// .text:00000000001A43B4                                         ; Keypatch modified this from:
+// .text:00000000001A43B4                                         ;   MOV W0, #0x390
+//
+// .text:00000000001A43C4                 BL              _ZN10DbgSetting5SceneC2EPN4sead4HeapE ; Keypatch modified this from:
+// .text:00000000001A43C4                                         ;   BL _ZN12TitleForShow5SceneC2EPN4sead4HeapE
+// .text:00000000001A43D4 ; } // starts at 162054
+//
+// Since DbgSetting doesn't have its own newScene function, TitleForShow's
+// newScene function is overwritten to load DbgSetting.
+//
+// Construct DbgSetting scene in Cstm::newScene<TitleForShow::Scene>(sead::Heap*)
+@enabled
+001A43B4 00008252
+001A43C4 C9F72594
+
+// .text:0000000000FE5820 _ZN2Lp3Sys15cpAssertProductEi
+// .text:0000000000FE5820 ; __unwind {
+// .text:0000000000FE5820                 RET                     ; Keypatch modified this from:
+// .text:0000000000FE5820                                         ;   MOV W8, W0
+// .text:0000000000FE5824 ; } // starts at FE5820
+//
+// This function is called when development mode is enabled during boot.
+// It halts the program in retail builds, so it needs to be dummied out.
+//
+// Dummy out Lp::Sys::cpAssertProduct()
+@enabled
+01236908 c0035fd6
+
+//
+// DbgSetting uses debug text drawing functions. These are dummied out
+// in the retail game, but some functions for retail are stiil left.
+// We can redirect the debug functions to the retail functions and text
+// drawing will be restored.
+//
+// Redirect debug text drawing functions to retail functions
+@enabled
+0124A930 2C000014
+0124A934 E5000014
+0124A958 2E010014
+0124A95C 6B010014
+0124A960 24020014
+0124A984 6D020014
+0124A988 16000014
+0124A98C CF000014
+0124A9B0 18010014
+0124A9B4 55010014
+0124A9B8 0E020014
+0124A9DC 57020014
+0124B780 04000014
+0124B784 E8000014
+0124B788 02000014
+0124B78C E6000014
+
+//
+// See above description - this is a continuation of the above patch.
+// Changes more text drawing functions to call retail functions.
+//
+// Redirect pilot text drawing functions to retail functions
+@enabled
+013106D0 C0035FD6
+01310744 C0035FD6
+013107B8 C0035FD6
+01310840 C0035FD6
+013108B4 C0035FD6
+01310928 C0035FD6
+01310960 C0035FD6
+0131092C 4F61746D
+01310930 65616C20
+01310934 3C332053
+01310938 696D6F6E
+0131093C 53686F75
+01310940 746F7574
+01310944 7320746F
+01310948 00000000
+0131094C 4D617374
+01310950 65724630
+01310954 78000000
+
+// .text:00000000010A4BB4 _ZN2Lp3Utl5Limit24getSceneDbgMixCtrl_PilotEv
+// .text:00000000010A4BB4 ; __unwind {
+// .text:00000000010A4BB4                 MOV             X0, XZR ; Keypatch modified this from:
+// .text:00000000010A4BB4                                         ;   SUB SP, SP, #0x10
+// .text:00000000010A4BB8                 B               _ZN2Lp3Utl7getCtrlEi ; Keypatch modified this from:
+// .text:00000000010A4BB8                                         ;   ADRP X8, #off_2B6E418@PAGE
+// .text:00000000010A4C28 ; } // starts at 10A4BB4
+//
+// Instead of reading from the debug control mix, read from the standard
+// release controllers.
+//
+// Redirect Lp::Utl::Limit::getSceneDbgMixCtrl_Pilot() to Lp::Utl::getCtrl()
+@enabled
+012F2874 E0031FAA
+012F2878 1BFFFF17
+
+//
+// Patches the relocation data for "Sample/Actor". This replaces it
+// with the function address for Cstm::newScene<TitleForShow::Scene>(),
+// then places it after "DbgSetting" in the scene table.
+//
+// Add newScene function for DbgSetting
+@enabled
+014A03E0 9048df02
+014A03F0 84431a00
+
+//
+// Patches the relocation data for "Sample/Actor"'s scene flags. This
+// replaces it with the function address for Cstm::newScene<Game::CmnScene>(),
+// then places it after "FreeTest" in the scene table.
+//
+// Add newScene function for FreeTest
+@enabled
+014A03F8 3846df02
+014A0408 38411a00
+
+//
+// This patch translates the debug menu into English (mostly). Translations
+// were done by OatmealDome. If you don't want this, change "@enabled" to
+// "@disabled" or turn it off manually in the IPSwitch menu.
+//
+// NOTE: The localizables below will be replaced with the actual text when
+// you run MenuLocalizer.exe.
+//
+// English translation (EIYAKU)
+@enabled
+028C978C "STAGE_OTHER"
+028C9796 "STAGE_MISSION_INSPECTION"
+028C97AB "STAGE_VERSUS_INSPECTION"
+028C97B7 "STAGE_MISSION_TEST"
+028C97CC "STAGE_VERSUS_TEST"
+028C97D8 "STAGE_UNCATEGORIZED"
+028C97E2 "WEAPON_MAIN"
+028C97EC "WEAPON_SUB"
+028C97F3 "WEAPON_SPECIAL"
+028C9803 "GEAR_HEAD"
+028C980D "GEAR_CLOTHES"
+028C9811 "GEAR_SHOES"
+028C9815 "GEAR_SKILL"
+028C9825 "PERSONAL_SETTINGS"
+028C9ACC "CONTROL_INDICATOR"
+028C9B3A "MODE_INDICATOR"
+028C9B51 "MODE_INDICATOR_DEPENDING_ON_MAP"
+028C9B65 "MODE_INDICATOR_WALKTHROUGH"
+028C9BC8 "PERSONAL_SETTINGS_SEX"
+028C9BCF "PERSONAL_SETTINGS_HAIR"
+028C9BD3 "PERSONAL_SETTINGS_BOTTOM"
+028C9BDD "PERSONAL_SETTINGS_TEAM"
+028C9BF1 "PERSONAL_SETTINGS_FESTIVAL"
+028C9BFB "PERSONAL_SETTINGS_CAMERA_SENSITIVITY_X"
+028C9C0D "PERSONAL_SETTINGS_CAMERA_SENSITIVITY_Y"
+028C9C1F "PERSONAL_SETTINGS_SEX_SQUID_GIRL"
+028C9C29 "PERSONAL_SETTINGS_SEX_SQUID_BOY"
+028C9C33 "RANDOM"
+028C9C40 "UNSPECIFIED"
+028C9C53 "PERSONAL_SETTINGS_BRAVO"
+028C9C59 "PERSONAL_SETTINGS_FESTIVAL_NONE"
+028C9C63 "PERSONAL_SETTINGS_FESTIVAL_ANNOUNCEMENT"
+028C9C70 "PERSONAL_SETTINGS_FESTIVAL_IN_SESSION"
+028C9C7A "PERSONAL_SETTINGS_FESTIVAL_WAITING_RESULTS"
+028C9C93 "RULE_ENVIRONMENT"
+028C9C9A "RULE_GAMEMODE"
+028C9CAA "RULE_VS_MODE"
+028C9CBA "RULE_SPECTATOR_ZERO"
+028C9CC5 "RULE_SPECTATOR_ONE"
+028C9CD0 "RULE_COLOR_COMMUNNICATION_ONLY"
+028C9CE2 "RULE_TIME_30_SECONDS"
+028C9CEC "RULE_TIME_1_MINUTE"
+028C9CF3 "RULE_TIME_2_MINUTES"
+028C9CFA "RULE_TIME_3_MINUTES"
+028C9D01 "RULE_TIME_5_MINUTES"
+028C9D08 "RULE_TIME_10_MINUTES"
+028C9D12 "RULE_TIME_99_MINUTES"
+028C9D1C "RULE_ENVIRONMENT_NOT_FORCED"
+028C9D2C "RULE_ENVIRONMENT_DAY"
+028C9D30 "RULE_ENVIRONMENT_EVENING"
+028C9D37 "RULE_ENVIRONMENT_NIGHT"
+028C9D3B "RULE_GAMEMODE_NAWABARI"
+028C9D48 "RULE_GAMEMODE_AREA"
+028C9D58 "RULE_GAMEMODE_YAGURA"
+028C9D68 "RULE_GAMEMODE_ROCKET"
+028C9D7B "RULE_VS_MODE_AUTOMATIC"
+028C9D82 "RULE_VS_MODE_PRIVATE"
+028C9D95 "RULE_VS_MODE_LEAGUE"
+028C9D9F "NONE"
+0287A6F3 "RULE_TIME"
+028C0DF2 "RULE_GAMEMODE_HOKO"
+028A3EE4 "PERSONAL_SETTINGS_SKIN_COLOR"
+028A3EFA "PERSONAL_SETTINGS_EYE_COLOR"
+028ADF70 "PERSONAL_SETTINGS_SEX_RIVAL"
+028A9BF5 "RULE_TIME_STANDARD"
+02863261 "STAGE_MISSION"
+0285C3C0 "STAGE_SCENE"
+0286ED4E "RULE"
+02861FFB "TANK"
+
+@stop
