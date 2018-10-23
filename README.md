@@ -4,7 +4,7 @@ These patches re-enable debugging features accidentally left in Splatoon 2.
 
 ## How to install
 
-Coming soon.
+[See my blog for more information](https://oatmealdome.me/blog/debug-patches-instructions-and-faq).
 
 ## Credits and Shoutouts
 
@@ -13,4 +13,6 @@ Coming soon.
 * Everyone from Wii Sports
 * Khangaroo
 * Dualie (3096)
+* Shadow
+* Zewia
 * MasterF0x
