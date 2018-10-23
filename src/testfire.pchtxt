@@ -67,7 +67,25 @@
 // Construct DbgSetting scene in Cstm::newScene<Shop::Scene>(sead::Heap*)
 @enabled
 00162084 00008252
-00162094 03772094 
+00162094 03772094
+
+// .text:000000000016224C _ZN4Cstm8newSceneIN8MiniGame5SceneEEEPN2Lp3Sys5SceneEiPN4sead4HeapE
+// .text:000000000016224C ; __unwind {
+// .text:000000000016227C                 MOV             W0, #0x1000 ; unsigned __int64
+// .text:000000000016227C                                         ; Keypatch modified this from:
+// .text:000000000016227C                                         ;   MOV W0, #0x3B0
+//
+// .text:000000000016228C                 BL              _ZN10DummyMatch5SceneC2EPN4sead4HeapE ; Keypatch modified this from:
+// .text:000000000016228C                                         ;   BL _ZN15DummyLocalMatch5SceneC2EPN4sead4HeapE
+// .text:000000000016229C ; } // starts at 16224C
+//
+// Since DummyMatch doesn't have its own newScene function, MiniGame's
+// newScene function is overwritten to load DummyMatch.
+//
+// Construct DummyMatch scene in Cstm::newScene<MiniGame::Scene>(sead::Heap*)
+@enabled
+0016227C 00008252
+0016228C F6952094 
 
 // .text:0000000000FE5820 _ZN2Lp3Sys15cpAssertProductEi
 // .text:0000000000FE5820 ; __unwind {
@@ -141,6 +159,24 @@
 010A4BB4 E0031FAA
 010A4BB8 14FFFF17
 
+// .text:0000000000987A64 _ZN10DummyMatch5SceneC2EPN4sead4HeapE
+// .text:0000000000987A64 ; __unwind {
+// .text:0000000000987DF8                 NOP                     ; Keypatch modified this from:
+// .text:0000000000987DF8                                         ;   B loc_987E00
+//
+// .text:0000000000987DFC loc_987DFC                              ; CODE XREF: DummyMatch::Scene::Scene(sead::Heap *)+38C↑j
+// .text:0000000000987DFC                 MOV             W8, #1  ; Keypatch modified this from:
+// .text:0000000000987DFC                                         ;   MOV W8, WZR
+// .text:0000000000987E18 ; } // starts at 987A64
+//
+// Use LAN mode for DummyMatch - the servers are down anyway, and we wouldn't
+// want to risk anyone getting banned even if they were still up.
+//
+// Force ChangeLanMatchInBoot to always be true
+@enabled
+00987DF8 1F2003D5
+00987DFC 28008052
+
 //
 // Patches the relocation data for "Sample/Actor". This replaces it
 // with the function address for Cstm::newScene<Shop::Scene>(),
@@ -160,6 +196,15 @@
 @enabled
 012858E0 d8e39702
 012858F0 041f1600
+
+// Patches the relocation data for "Sample/ResLoad"'s scene flags. This replaces
+// it with the function address for Cstm::newScene<MiniGame::Scene>(), then places
+// it after "DummyMatch" in the scene table.
+//
+// Add newScene function for DummyMatch
+@enabled
+012858F8 F0E69702
+01285908 4C221600
 
 //
 // This patch translates the debug menu into English (mostly). Translations
@@ -240,5 +285,21 @@
 0247137E "TANK"
 024C4D1E "CONTROL_INDICATOR"
 024C4D8C "MODE_INDICATOR"
+024C51D5 "DUMMYLOCALMATCH_STARTING_LOCAL_COMMUNICATIONS"
+024C5203 "DUMMYLOCALMATCH_SEARCHING_ROOM"
+024C521F "DUMMYLOCALMATCH_SWITCH_ROOM_CREATION"
+024C524D "DUMMYLOCALMATCH_CREATING_ROOM"
+024C5275 "DUMMYLOCALMATCH_JOINING_ROOM"
+024C529A "DUMMYMATCH_SEARCHING_PARTNERS"
+024C52BC "DUMMYMATCH_CONNECTED_PARTNERS"
+024C52D3 "DUMMYMATCH_START_WITH_Y"
+024C52E9 "DUMMYMATCH_CONFIRMING_CONNECTED_PARTNERS"
+024C5311 "DUMMYMATCH_SYNCING"
+024C531B "DUMMYMATCH_TO_NEXT_SCENE"
+024C53A2 "DUMMYMATCH_PRESS_A"
+024C53DF "DUMMYMATCH_SECONDS_REMAINING"
+024C53EB "DUMMYMATCH_PREPARING"
+024C53FB "DUMMYMATCH_CONNECTED_TO_INTERNET"
+024C5429 "DUMMYMATCH_PREPARING_FOR_MATCHING"
 
 @stop

@@ -1,7 +1,7 @@
 @little-endian
 @nsobid-68202F1AE35348E476523EA2F6E36AA4
 #01003870040FA000 Splatoon 2: Splatfest World Premiere (US)
-#01003870040FA000 Splatoon 2 Splatfest World Premiere (EU)
+#010086f0040fc000 Splatoon 2 Splatfest World Premiere (EU)
 #0100D070040F8000 スプラトゥーン2 前夜祭 (Splatoon 2 Eve, JP)
 
 @flag offset_shift 0x100
@@ -56,6 +56,26 @@
 @enabled
 001A43B4 00008252
 001A43C4 C9F72594
+
+// text:00000000001A43D8 ; Lp::Sys::Scene * Cstm::newScene<ThanksForShow::Scene>(int, sead::Heap *)
+// .text:00000000001A43D8 ; __unwind {
+// .text:00000000001A4408                 MOV             W0, #0x1000 ; unsigned __int64
+// .text:00000000001A4408                                         ; Keypatch modified this from:
+// .text:00000000001A4408                                         ;   MOV W0, #0x3E0
+//
+// .text:00000000001A4418                 BL              _ZN10DummyMatch5SceneC2EPN4sead4HeapE ; Keypatch modified this from:
+// .text:00000000001A4418                                         ;   BL _ZN13ThanksForShow5SceneC2EPN4sead4HeapE
+// .text:00000000001A4428 ; } // starts at 1A43D8
+// .text:00000000001A4428 ; End of function Cstm::newScene<ThanksForShow::Scene>(int,sead::Heap *)
+//
+// Since DummyMatch doesn't have its own newScene function, ThanksForShow's
+// newScene function is overwritten to load DummyMatch.
+//
+// Construct DummyMatch scene in Cstm::newScene<ThanksForShow::Scene>(sead::Heap*)
+@enabled
+001A4408 00008252
+001A4418 E71D2694
+
 
 // .text:0000000000FE5820 _ZN2Lp3Sys15cpAssertProductEi
 // .text:0000000000FE5820 ; __unwind {
@@ -136,6 +156,24 @@
 012F2874 E0031FAA
 012F2878 1BFFFF17
 
+// .text:0000000000B2BBB4 _ZN10DummyMatch5SceneC2EPN4sead4HeapE
+// .text:0000000000B2BBB4 ; __unwind {
+// .text:0000000000B2BF48                 NOP                     ; Keypatch modified this from:
+// .text:0000000000B2BF48                                         ;   B loc_B2BF50
+//
+// .text:0000000000B2BF4C loc_987DFC                              ; CODE XREF: DummyMatch::Scene::Scene(sead::Heap *)+38C↑j
+// .text:0000000000B2BF4C                 MOV             W8, #1  ; Keypatch modified this from:
+// .text:0000000000B2BF4C                                         ;   MOV W8, WZR
+// .text:0000000000B2BF68 ; } // starts at B2BBB4
+//
+// Use LAN mode for DummyMatch - the servers are down anyway, and we wouldn't
+// want to risk anyone getting banned even if they were still up.
+//
+// Force ChangeLanMatchInBoot to always be true
+@enabled
+00B2BF48 1F2003D5
+00B2BF4C 28008052
+
 //
 // Patches the relocation data for "Sample/Actor". This replaces it
 // with the function address for Cstm::newScene<TitleForShow::Scene>(),
@@ -155,6 +193,16 @@
 @enabled
 014A03F8 3846df02
 014A0408 38411a00
+
+//
+// Patches the relocation data for "Sample/ResLoad"'s scene flags. This replaces
+// it with the function address for Cstm::newScene<ThanksForShow::Scene>(),
+// then places it after "DummyMatch" in the scene table.
+//
+// Add newScene function for DummyMatch
+@enabled
+014A0410 5049DF02
+014A0420 D8431A00
 
 //
 // This patch translates the debug menu into English (mostly). Translations
@@ -235,5 +283,21 @@
 0285C3C0 "STAGE_SCENE"
 0286ED4E "RULE"
 02861FFB "TANK"
+028CA0EB "DUMMYLOCALMATCH_STARTING_LOCAL_COMMUNICATIONS"
+028CA119 "DUMMYLOCALMATCH_SEARCHING_ROOM"
+028CA135 "DUMMYLOCALMATCH_SWITCH_ROOM_CREATION"
+028CA163 "DUMMYLOCALMATCH_CREATING_ROOM"
+028CA18B "DUMMYLOCALMATCH_JOINING_ROOM"
+028CA1B0 "DUMMYMATCH_SEARCHING_PARTNERS"
+028CA1D2 "DUMMYMATCH_CONNECTED_PARTNERS"
+028CA1E9 "DUMMYMATCH_START_WITH_Y"
+028CA1FF "DUMMYMATCH_CONFIRMING_CONNECTED_PARTNERS"
+028CA227 "DUMMYMATCH_SYNCING"
+028CA231 "DUMMYMATCH_TO_NEXT_SCENE"
+028CA2B8 "DUMMYMATCH_PRESS_A"
+028CA2F5 "DUMMYMATCH_SECONDS_REMAINING"
+028CA301 "DUMMYMATCH_PREPARING"
+028CA311 "DUMMYMATCH_CONNECTED_TO_INTERNET"
+028CA33F "DUMMYMATCH_PREPARING_FOR_MATCHING"
 
 @stop
