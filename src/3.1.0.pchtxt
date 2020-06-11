@@ -1,0 +1,129 @@
+@nsobid-034C8FA7A63B7A87F96F408B2AEFFF6C
+@flag offset_shift 0x100
+# Splatoon 2 3.1.0
+
+// Debug Menu
+@enabled
+0009CF44 20008052 
+002272FC 00008252 
+019A7E16 C0035FD6 
+019BBE94 2C000014E5000014 
+019BBEBC 2E0100146B01001424020014 
+019BBEE8 6D02001416000014CF000014 
+019BBF14 18010014550100140E020014
+019BBF40 57020014 
+019BCCE4 04000014E400001402000014E2000014 
+01A661A4 E0031FAA1BFFFF17
+01C27F78 20F8
+01C27F88 CC722200
+0022730C 314740
+01C27F60 28F9
+01C27F70 20732200
+00227360 07714094
+01C27F48 38F5E103
+01C27F58 80702200
+
+// Debug Menu Translation
+@enabled
+0377642C "Octo"
+03776436 "Octo Stages"
+0377644C "Other"
+03776456 "Mission (Test)"
+0377646B "Octo (Test)"
+0377647A "VS (Test)"
+03776486 "Misc."
+03776490 "Main"
+0377649A "Sub"
+037764A1 "Special"
+037764B1 "Hed"
+037764BB "Clt"
+037764BF "Shs"
+037764C3 "Gear Abilities"
+037764D3 "Player"
+037764E9 "You can use a debug or normal controller."
+03776526 "[ Moving ]"
+03776531 "The L-Stick and D-Pad do the same thing."
+0377655C "Use the D-Pad to move the cursor."
+0377658A "Hold Y while using the D-Pad as a shortcut for frame selection."
+037765D0 "[ Selecting ]"
+037765ED "Press A to transition to a scene."
+0377661E "Press A to select weapons and maps, and return to the left."
+0377665B "Use Up and Down to change individual settings."
+0377668C "Press B to return."
+0377669F "Toggle between human-readable names and file names with R-Stick."
+037766E2 "Press + to load the selected map in the appropriate scene."
+0377672B "Press - to load FreeTest."
+0377674C "Press X to change the scene's mode."
+0377677A "[+] Load map     [-] FreeTest\n[X] Change mode  [B] Hold for help"
+037767E8 "[+]'s Mode\n"
+037767FF "< Map's mode >"
+03776813 "< Recon >"
+0377681E "< amiibo >"
+037768C0 "Gender"
+037768C7 "Hed"
+037768CB "Legwear"
+037768D5 "Skin"
+037768DF "Eye"
+037768E9 "Team"
+037768F3 "Splatfest"
+037768FD "Camera (X)"
+0377690F "Camera (Y)"
+03776921 "Sqd. Girl"
+0377692B "Squid Boy"
+03776935 "Octo Girl"
+0377693F "Octo Boy"
+03776949 "Random"
+03776956 "Unspecif."
+03776969 "Bravo"
+0377696F "No Fest"
+03776979 "Announced"
+03776986 "In Prog."
+03776990 "Results Pend."
+037769A9 "Time"
+037769B0 "Env"
+037769B7 "Gamemode"
+037769C7 "VS Type"
+037769D7 "Spectator0"
+037769E2 "Spectator1"
+037769ED "Color (Comm.)"
+037769FF "30 sec"
+03776A09 "1 min"
+03776A10 "2 mins"
+03776A17 "3 mins"
+03776A1E "5 mins"
+03776A25 "10 mins"
+03776A2F "99 mins"
+03776A39 "Unspecif."
+03776A49 "Day"
+03776A4D "Aft"
+03776A54 "Eve"
+03776A58 "Turf War"
+03776A65 "Splat Zones"
+03776A75 "Tower Control"
+03776A85 "Clam Blitz"
+03776A95 "Auto"
+03776A9C "Private"
+03776AAF "League"
+03776AB9 "None"
+03713B0F "Scene"
+0372B8C6 "Settings"
+0371BFD2 "Ink Tank"
+0371D3C3 "Mission"
+03759F0D "Normal"
+0377067C "Rainmaker"
+03776E45 "Starting local communication..."
+03776E73 "Searching for a room..."
+03776E8F "(Press Y to create a room.)"
+03776EBD "Creating a room..."
+03776EE5 "Joining the found room..."
+03776F0A "Waiting for players..."
+03776F2C "%d player(s) connected"
+03776F43 "Press Y to start."
+03776F59 "Please wait for all players to join."
+03776F81 "Syncing!"
+03776F8B "Loading next scene..."
+03777012 "Press the A button (host first)."
+0377704F "%ds left"
+0377705B "Preparing..."
+0377706B "Connected to the Internet!"
+03777099 "Preparing for matchmaking..."
